@@ -1,0 +1,16 @@
+{
+  "domain": "straightship",
+  "name": "Straightship",
+  "codeowners": [
+    "@peter-mdf"
+  ],
+  "config_flow": true,
+  "documentation": "https://github.com/ha-parcel-integrations/ha-straightship",
+  "integration_type": "hub",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/ha-parcel-integrations/ha-straightship/issues",
+  "quality_scale": "silver",
+  "requirements": [],
+  "single_config_entry": true,
+  "version": "0.1.0"
+}
