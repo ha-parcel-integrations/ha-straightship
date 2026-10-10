@@ -142,6 +142,7 @@ The integration fires these on the event bus (also available as device triggers 
 | `straightship_parcel_registered` | A new parcel appears in the active list |
 | `straightship_parcel_status_changed` | A parcel's canonical status changes (`old_status` / `new_status` in the payload), except the final hop to delivered |
 | `straightship_parcel_delivered` | A parcel is delivered |
+| `straightship_parcel_delivery_time_changed` | The expected delivery window changes — the page carries no delivery window, so this does not fire today |
 
 Every payload is the full normalised parcel plus the hub's `device_id`. Events are suppressed on the first refresh after start-up.
 

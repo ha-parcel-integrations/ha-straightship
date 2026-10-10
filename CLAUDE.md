@@ -46,9 +46,9 @@ you act in one of these areas:
 ## Carrier-specific notes
 
 - **Source:** one server-rendered result page per code, fetched with
-  `aiohttp` and parsed by `parser.py` with the stdlib HTML parser. Cells are
-  matched on their label text, never position, and a cell's value is its full
-  text content (one status sentence embeds an obfuscated mail link).
+  `aiohttp` and read by `parser.py`, which fails closed. Cells are matched on
+  their label text, never position, and a cell's value is its full text
+  content (one status sentence embeds an obfuscated mail link).
 - **Never** use the tracking form on the carrier's site (its script forwards
   the entered code to a third party), the proof-of-delivery lookup (needs the
   recipient's name), a browser, a proxy, batching or code discovery.
