@@ -23,6 +23,7 @@ async def test_diagnostics_redacts_and_counts(hass):
             "history": [{"timestamp": "2026-01-05T15:04:05+00:00", "status": None}],
             "raw": {
                 "tracking_code": "STRTD0000000000001",
+                "tracking_id": "STRTD0000000000001",
                 "client_code": "CLIENT1",
                 "package_id": "PKG1",
                 "last_updated": "2026-01-05 15:04:05",
@@ -58,7 +59,14 @@ async def test_diagnostics_redacts_and_counts(hass):
     assert result["incoming"][0]["barcode"] == "**REDACTED**"
     assert result["incoming"][0]["receiver"] == "**REDACTED**"
     raw = result["incoming"][0]["raw"]
-    for key in ("tracking_code", "client_code", "package_id", "last_updated", "html"):
+    for key in (
+        "tracking_code",
+        "tracking_id",
+        "client_code",
+        "package_id",
+        "last_updated",
+        "html",
+    ):
         assert raw[key] == "**REDACTED**"
     assert raw["history"][0]["timestamp"] == "**REDACTED**"
     assert raw["history"][0]["city"] == "**REDACTED**"
@@ -67,6 +75,7 @@ async def test_diagnostics_redacts_and_counts(hass):
     # the status sentence repeats the city inline; that must not survive either
     assert raw["history"][0]["status"] == "Delivered"
     assert "Testville" not in str(result)
+    assert "STRTD0000000000001" not in str(result)
     # non-identifying fields survive, or the diagnostics would be useless
     assert result["incoming"][0]["status"] == "out_for_delivery"
 

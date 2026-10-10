@@ -109,7 +109,12 @@ def test_unmapped_summary_falls_back_to_newest_mappable_history_event(caplog):
     history = [REGISTERED_TEXT, f"{OFD_TEXT} ({CITY}, ON)", "Unlisted sentence"]
     with caplog.at_level(logging.WARNING):
         assert map_parcel_status("Mid Flight", history) == ParcelStatus.OUT_FOR_DELIVERY
-    assert caplog.text == ""
+        assert map_parcel_status("Mid Flight", history) == ParcelStatus.OUT_FOR_DELIVERY
+    # The summary words of a parcel in flight are the gap we still need
+    # reported, so a rescued fallback warns too — once, and without the text.
+    assert caplog.text.count("Unrecognised Straightship summary status") == 1
+    assert "out_for_delivery" in caplog.text
+    assert "Mid Flight" not in caplog.text
 
 
 def test_unmapped_everywhere_is_unknown_with_one_category_only_warning(caplog):

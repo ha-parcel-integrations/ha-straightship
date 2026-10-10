@@ -27,7 +27,7 @@
               "remove": "Pakketten verwijderen"
             },
             "data_description": {
-              "add": "Voer een Straightship-trackingcode in om het pakket te volgen. Je vindt de code op de verzendbevestiging of het niet-thuiskaartje."
+              "add": "Voer een Straightship-trackingcode in om het pakket te volgen. Je vindt de code op de verzendbevestiging."
             }
           },
           "delivered": {

@@ -79,18 +79,19 @@ def normalize_status_text(text: str | None) -> str:
     return _CONTACT_RE.sub(r"\1<address>\2", collapsed)
 
 
-def _warn_unmapped_status(category: str) -> None:
+def _warn_unmapped_status(category: str, reported: str = "unknown") -> None:
     """Log an unmapped carrier status once, with a copy-paste issue link."""
     if category in _unmapped_statuses_logged:
         return
     _unmapped_statuses_logged.add(category)
     _LOGGER.warning(
         "Unrecognised Straightship %s status — help us map it. Open an issue "
-        "and paste this line: %s\n  category=%s → reported as 'unknown'; the "
+        "and paste this line: %s\n  category=%s → reported as '%s'; the "
         "status text itself is in the integration diagnostics",
         category,
         NEW_ISSUE_URL,
         category,
+        reported,
     )
 
 
@@ -111,8 +112,10 @@ def map_parcel_status(
     """Map the summary status, else the newest mappable history event.
 
     An absent summary (a parcel the carrier does not know yet) reports
-    ``unknown`` silently; a summary and history that both fail to map report
-    ``unknown`` with a one-shot warning naming the category only.
+    ``unknown`` silently. An unmapped summary always warns once, naming the
+    category and what it reported instead — the summary words of a parcel in
+    flight have never been seen, so a silent history fallback would hide the
+    one case we still need reported.
     """
     if not summary:
         return ParcelStatus.UNKNOWN
@@ -120,9 +123,10 @@ def map_parcel_status(
     if mapped is not None:
         return mapped
     for earlier in reversed(history_texts or []):
-        mapped = map_event_status(earlier)
-        if mapped is not None:
-            return mapped
+        fallback = map_event_status(earlier)
+        if fallback is not None:
+            _warn_unmapped_status("summary", fallback.value)
+            return fallback
     _warn_unmapped_status("summary")
     return ParcelStatus.UNKNOWN
 

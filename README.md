@@ -9,7 +9,7 @@
 
 A custom Home Assistant integration that tracks your [Straightship](https://straightship.com) parcels (Canada B2C deliveries). No account is needed — you enter the tracking code yourself, just like on the Straightship website.
 
-> **Pre-1.0.** Built from three delivered parcels. Straightship's tracking page has no documented API and has only been seen showing `Delivered` as its overall status, so for a parcel still on its way the integration reads the newest recognised entry of the status history instead. If neither can be mapped the parcel shows `unknown` and one warning is logged naming the kind of status (summary or history), never its text. Please [open an issue](https://github.com/ha-parcel-integrations/ha-straightship/issues/new?template=unrecognised_status.yml) when you see it.
+> **Pre-1.0.** Built from three delivered parcels. Straightship's tracking page has no documented API and has only been seen showing `Delivered` as its overall status, so for a parcel still on its way the integration reads the newest recognised entry of the status history instead and logs one warning about it. If neither can be mapped the parcel shows `unknown` and one warning is logged. A warning names the kind of status (summary or history) and what was reported instead, never the status text. Please [open an issue](https://github.com/ha-parcel-integrations/ha-straightship/issues/new?template=unrecognised_status.yml) when you see it.
 
 Part of the [ha-parcel-integrations](https://ha-parcel-integrations.github.io/) family: it publishes the same canonical parcel format, statuses and events as the other carrier integrations, so it plugs straight into the [Parcel Aggregator](https://github.com/ha-parcel-integrations/ha-parcel-aggregator) and cross-carrier automations.
 
@@ -175,7 +175,7 @@ logger:
 ## Troubleshooting
 
 - **A parcel shows `unknown`** — Straightship does not know the code yet, or the code is wrong. It picks up automatically once the parcel is in their system.
-- **A status logs "Unrecognised Straightship summary status" or "…history status"** — please [open an issue](https://github.com/ha-parcel-integrations/ha-straightship/issues/new) with the logged line so the mapping can be extended; the text itself is in the integration's diagnostics.
+- **A status logs "Unrecognised Straightship summary status" or "…history status"** — please [open an issue](https://github.com/ha-parcel-integrations/ha-straightship/issues/new?template=unrecognised_status.yml) with the logged line so the mapping can be extended; the text itself is in the integration's diagnostics.
 
 ## Related integrations
 

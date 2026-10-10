@@ -61,8 +61,10 @@ you act in one of these areas:
   retained by the coordinator. 429/5xx follow the shared backoff.
 - **Status:** the summary `Package Status` is `raw_status`. Only `Delivered`
   has been observed there, so any other word falls back to the newest mappable
-  history sentence, then `unknown` plus a one-shot WARNING naming the category
-  (`summary` or `history`) and never the value. Sentences are mapped by exact
+  history sentence, then `unknown`. An unmapped summary warns once **even when
+  the fallback rescues it** — those are exactly the words still missing — and
+  the WARNING names the category (`summary` or `history`) plus what was
+  reported instead, never the value. Sentences are mapped by exact
   text after stripping the trailing `(City, PR)` suffix and collapsing
   whitespace; the failed-attempt sentence's contact address is normalised to
   `<address>` first.

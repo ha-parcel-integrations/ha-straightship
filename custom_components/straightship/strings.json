@@ -27,7 +27,7 @@
               "remove": "Remove parcels"
             },
             "data_description": {
-              "add": "Enter a Straightship tracking code to start tracking it. You find it on the shipping confirmation or the missed-delivery card."
+              "add": "Enter a Straightship tracking code to start tracking it. You find it on the shipping confirmation."
             }
           },
           "delivered": {

@@ -31,7 +31,7 @@ TO_REDACT = {
     "name",
     "driver",
     "signature",
-    "tracking_code",
+    "tracking_id",
     "client_code",
     "package_id",
     "last_updated",
