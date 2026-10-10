@@ -35,6 +35,7 @@ async def test_diagnostics_redacts_and_counts(hass):
                         "city": "Testville",
                     }
                 ],
+                # a payload cached before the page was dropped from raw
                 "html": "<html>Testville</html>",
             },
         }

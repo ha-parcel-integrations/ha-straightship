@@ -88,4 +88,4 @@ class StraightshipApiClient:
             return None
         if page["tracking_id"].upper() != code:
             raise StraightshipApiError("tracking ID does not match the request")
-        return {"tracking_code": code, **page, "html": html}
+        return {"tracking_code": code, **page}

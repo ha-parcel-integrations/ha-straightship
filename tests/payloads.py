@@ -117,7 +117,6 @@ def _raw(code: str, summary_status: str, rows) -> dict:
             {"timestamp": ts, "status": status, "city": city or None}
             for ts, status, city in rows
         ],
-        "html": "<html></html>",
     }
 
 

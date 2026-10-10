@@ -77,10 +77,15 @@ you act in one of these areas:
   (the "before 9:00pm" promise has neither a date nor a time zone),
   pickup point, weight, dimensions. `-` for `Client Code` / `Package ID`
   means absent. `CAPABILITIES` is `url` + `history`.
-- **`raw`** is the parsed page plus the complete response (`html`), never
-  trimmed. Privacy lives in `diagnostics.py`: code, client/package IDs,
-  timestamps, city/location (including the suffix inside status sentences),
-  recipient/order name, address, POD URL/media and the raw HTML.
+- **`raw`** is the parsed record — every field the page carries, untrimmed —
+  but **not** the page itself. The response is 90% WordPress chrome, it is
+  redacted out of diagnostics anyway, and it rides in every parcel sensor's
+  attributes; a changed page raises before anything is normalised, so it would
+  not be in `raw` in the one case it could serve. `TO_REDACT` still lists
+  `html` for payloads cached before it was dropped. Privacy lives in
+  `diagnostics.py`: code (including the page's echoed `tracking_id`),
+  client/package IDs, timestamps, city/location (including the suffix inside
+  status sentences), recipient/order name, address and POD URL/media.
 
 ## Options and reloads
 

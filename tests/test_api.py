@@ -40,8 +40,8 @@ async def test_get_parcel_returns_the_full_payload():
     assert parcel["tracking_id"] == ACTIVE_CODE
     assert parcel["package_status"] == "Delivered"
     assert len(parcel["history"]) == 4
-    # raw carries the complete, untrimmed response
-    assert parcel["html"] == html
+    # raw is the parsed record; the surrounding page is not part of it
+    assert "html" not in parcel
 
 
 async def test_get_parcel_uppercases_and_encodes_the_code():
