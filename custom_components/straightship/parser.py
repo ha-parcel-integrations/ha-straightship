@@ -1,10 +1,10 @@
-"""Parser for the Straightship result page.
+"""Reader for Straightship's tracking reply.
 
-The page is server-rendered HTML with no structured alternative, so the parser
-fails closed: anything it cannot positively identify raises
-:class:`StraightshipParseError` instead of yielding a partial parcel. Cells are
-matched on their label text, never on position, and a cell's value is its full
-text content because one status sentence embeds a mail link.
+The reply carries no structured alternative, so this module fails closed:
+anything it cannot positively identify raises
+:class:`StraightshipParseError` instead of yielding a partial parcel. Values
+are matched on their label, never on position, and a value is taken in full
+because one status sentence embeds a mail link.
 """
 from __future__ import annotations
 
@@ -28,7 +28,7 @@ _LAST_UPDATED_RE = re.compile(r"^Last Updated:\s*(.*)$", re.IGNORECASE)
 
 
 class StraightshipParseError(Exception):
-    """Raised when the page does not have the expected result shape."""
+    """Raised when the reply does not have the expected shape."""
 
 
 def clean_text(value: str) -> str:
@@ -161,9 +161,9 @@ def _history(tables: list[list[list[tuple[str, str]]]]) -> list[dict[str, str]] 
 
 
 def parse_page(html: str) -> dict | None:
-    """Parse a result page into the structured part of the ``raw`` payload.
+    """Read a tracking reply into the structured part of the ``raw`` payload.
 
-    Returns ``None`` for the carrier's "no results" page and raises
+    Returns ``None`` for the carrier's "no results" answer and raises
     :class:`StraightshipParseError` for anything else without a summary table
     and a history table.
     """

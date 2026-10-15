@@ -40,10 +40,10 @@ class StraightshipApiError(Exception):
 
 
 class StraightshipApiClient:
-    """Client for the public Straightship result page.
+    """Client for Straightship's public tracking lookup.
 
-    No authentication: the page is keyed on the tracking code alone. An unknown
-    code is still HTTP 200, with a "No results found!" body.
+    No authentication: the lookup is keyed on the tracking code alone. An
+    unknown code still answers HTTP 200, saying it found nothing.
     """
 
     def __init__(self, session: aiohttp.ClientSession) -> None:
@@ -51,15 +51,15 @@ class StraightshipApiClient:
         self._session = session
 
     async def async_get_parcel(self, tracking_code: str) -> dict[str, Any] | None:
-        """Fetch one parcel's tracking page.
+        """Fetch one parcel's tracking reply.
 
         Returns the raw parcel dict for a known parcel, or ``None`` when the
-        carrier reports the code as unknown. A changed page or a mismatching
-        tracking ID raises :class:`StraightshipApiError`; network errors
-        propagate as ``aiohttp.ClientError``.
+        carrier reports the code as unknown. A reply we cannot read, or a
+        mismatching tracking id, raises :class:`StraightshipApiError`; network
+        errors propagate as ``aiohttp.ClientError``.
         """
-        # Lookup ignores case but the page echoes what it was given, so
-        # normalising up front keeps the echoed ID comparable.
+        # Lookup ignores case but the reply echoes what it was given, so
+        # normalising up front keeps the echoed id comparable.
         code = tracking_code.upper()
         url = TRACKING_API_URL.format(tracking_code=quote(code, safe=""))
         async with self._session.get(url) as response:
@@ -81,11 +81,11 @@ class StraightshipApiClient:
             html = await response.text()
 
         try:
-            page = parse_page(html)
+            parsed = parse_page(html)
         except StraightshipParseError as err:
-            raise StraightshipApiError(f"unexpected page ({err})") from err
-        if page is None:
+            raise StraightshipApiError(f"unexpected reply ({err})") from err
+        if parsed is None:
             return None
-        if page["tracking_id"].upper() != code:
-            raise StraightshipApiError("tracking ID does not match the request")
-        return {"tracking_code": code, **page}
+        if parsed["tracking_id"].upper() != code:
+            raise StraightshipApiError("tracking id does not match the request")
+        return {"tracking_code": code, **parsed}

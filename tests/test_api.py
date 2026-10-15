@@ -80,7 +80,7 @@ async def test_page_without_summary_is_a_changed_template_error():
     client = StraightshipApiClient(_session_returning(200, "<html><p>Welcome</p></html>"))
     with pytest.raises(StraightshipApiError) as err:
         await client.async_get_parcel(ACTIVE_CODE)
-    assert "unexpected page" in str(err.value)
+    assert "unexpected reply" in str(err.value)
 
 
 async def test_page_without_history_is_a_changed_template_error():

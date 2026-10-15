@@ -149,7 +149,7 @@ def parse_iso(value: str | None) -> datetime | None:
 
 
 def to_iso_timestamp(value: Any) -> str | None:
-    """Return an ISO 8601 UTC string for the page's ``YYYY-MM-DD HH:MM:SS``.
+    """Return an ISO 8601 UTC string for the reply's ``YYYY-MM-DD HH:MM:SS``.
 
     The carrier states its timestamps are UTC. Anything that does not parse is
     ``None``.
@@ -186,7 +186,7 @@ def format_dimensions(
 def build_history(
     events: list | None, *, max_events: int = HISTORY_MAX_EVENTS
 ) -> list[dict]:
-    """Build the canonical ``history`` list from the page's history rows.
+    """Build the canonical ``history`` list from the reply's history rows.
 
     Each entry is ``{timestamp, status, raw_status}``, top-level (not under
     ``raw``) so it survives the aggregator's ``strip_raw()``. ``raw_status`` is
@@ -229,7 +229,7 @@ def normalize_parcel(raw: dict, *, include_history: bool = False) -> dict:
     The **keys of the returned dict are the contract**: every carrier in the
     suite returns exactly these, in this order. A key is ``None`` when the
     carrier does not expose it — never omitted. ``delivered_at`` comes from the
-    delivered history event alone; the page's "Last Updated" merely repeats it.
+    delivered history event alone; the carrier's own "last updated" repeats it.
     """
     tracking_code = raw.get("tracking_code")
     events = [e for e in raw.get("history") or [] if isinstance(e, dict)]

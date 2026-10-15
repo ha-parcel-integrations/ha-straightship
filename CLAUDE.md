@@ -45,45 +45,45 @@ you act in one of these areas:
 
 ## Carrier-specific notes
 
-- **Source:** one server-rendered result page per code, fetched with
-  `aiohttp` and read by `parser.py`, which fails closed. Cells are matched on
-  their label text, never position, and a cell's value is its full text
-  content (one status sentence embeds an obfuscated mail link).
-- **Never** use the tracking form on the carrier's site (its script forwards
-  the entered code to a third party), the proof-of-delivery lookup (needs the
-  recipient's name), a browser, a proxy, batching or code discovery.
+- **Source:** one keyless tracking reply per code, fetched with `aiohttp`
+  and read by `parser.py`, which fails closed. Values are matched on their
+  label, never position, and taken in full (one status sentence embeds an
+  obfuscated mail link).
+- **Never** use the carrier's own tracking form, the proof-of-delivery lookup
+  (it needs the recipient's name), a browser, a proxy, batching or code
+  discovery. The reasons are in the research notes.
 - **Code handling:** the configured code is upper-cased before the request;
-  the page's echoed `Tracking ID` must match it case-insensitively or the poll
-  fails. `barcode` is the configured code.
-- **Outcomes:** `No results found!` is `None` (non-retryable not-found, shown
-  as a pending `unknown` parcel). A `200` without the summary and history
-  tables is a changed template: `StraightshipApiError`, last-good data is
-  retained by the coordinator. 429/5xx follow the shared backoff.
+  the echoed tracking id must match it case-insensitively or the poll fails.
+  `barcode` is the configured code.
+- **Outcomes:** a not-found reply is `None` (non-retryable, shown as a pending
+  `unknown` parcel). A `200` the reader cannot recognise means the reply's
+  shape changed: `StraightshipApiError`, last-good data is retained by the
+  coordinator. 429/5xx follow the shared backoff.
 - **Status:** the summary `Package Status` is `raw_status`. Only `Delivered`
   has been observed there, so any other word falls back to the newest mappable
   history sentence, then `unknown`. An unmapped summary warns once **even when
   the fallback rescues it** — those are exactly the words still missing — and
   the WARNING names the category (`summary` or `history`) plus what was
   reported instead, never the value. Sentences are mapped by exact
-  text after stripping the trailing `(City, PR)` suffix and collapsing
-  whitespace; the failed-attempt sentence's contact address is normalised to
-  `<address>` first.
+  text after stripping the trailing place suffix and collapsing whitespace;
+  the failed-attempt sentence's contact address is normalised to `<address>`
+  first.
 - **History:** oldest to newest, stable sort so rows sharing a timestamp keep
-  document order, capped at 20. Entries carry the stripped sentence so no
+  the reply's own order, capped at 20. Entries carry the stripped sentence so no
   place name reaches the top-level list. Timestamps are UTC.
-- **`delivered_at`** comes from the delivered history event only; the page's
-  `Last Updated` merely repeats it and is not read.
+- **`delivered_at`** comes from the delivered history event only; the
+  carrier's own "last updated" value merely repeats it and is not read.
 - **`None` on purpose:** sender, receiver, `planned_from`/`planned_to`
-  (the "before 9:00pm" promise has neither a date nor a time zone),
-  pickup point, weight, dimensions. `-` for `Client Code` / `Package ID`
-  means absent. `CAPABILITIES` is `url` + `history`.
-- **`raw`** is the parsed record — every field the page carries, untrimmed —
-  but **not** the page itself. The response is 90% WordPress chrome, it is
+  (the carrier's delivery promise carries neither a date nor a time zone),
+  pickup point, weight, dimensions. A dash for the client or package id means
+  absent. `CAPABILITIES` is `url` + `history`.
+- **`raw`** is the parsed record — every field the reply carries, untrimmed —
+  but **not** the unparsed reply. Almost all of it is presentation, it is
   redacted out of diagnostics anyway, and it rides in every parcel sensor's
-  attributes; a changed page raises before anything is normalised, so it would
-  not be in `raw` in the one case it could serve. `TO_REDACT` still lists
-  `html` for payloads cached before it was dropped. Privacy lives in
-  `diagnostics.py`: code (including the page's echoed `tracking_id`),
+  attributes; an unrecognised reply raises before anything is normalised, so
+  it would not be in `raw` in the one case it could serve. `TO_REDACT` still
+  lists `html` for payloads cached before it was dropped. Privacy lives in
+  `diagnostics.py`: code (including the echoed `tracking_id`),
   client/package IDs, timestamps, city/location (including the suffix inside
   status sentences), recipient/order name, address and POD URL/media.
 

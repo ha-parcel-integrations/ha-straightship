@@ -9,7 +9,7 @@
 
 A custom Home Assistant integration that tracks your [Straightship](https://straightship.com) parcels (Canada B2C deliveries). No account is needed — you enter the tracking code yourself, just like on the Straightship website.
 
-> **Pre-1.0.** Built from three delivered parcels. Straightship's tracking page has no documented API and has only been seen showing `Delivered` as its overall status, so for a parcel still on its way the integration reads the newest recognised entry of the status history instead and logs one warning about it. If neither can be mapped the parcel shows `unknown` and one warning is logged. A warning names the kind of status (summary or history) and what was reported instead, never the status text. Please [open an issue](https://github.com/ha-parcel-integrations/ha-straightship/issues/new?template=unrecognised_status.yml) when you see it.
+> **Pre-1.0.** Built from three delivered parcels. Straightship has no documented API and its overall status has only been seen reading `Delivered`, so for a parcel still on its way the integration reads the newest recognised entry of the status history instead and logs one warning about it. If neither can be mapped the parcel shows `unknown` and one warning is logged. A warning names the kind of status (summary or history) and what was reported instead, never the status text. Please [open an issue](https://github.com/ha-parcel-integrations/ha-straightship/issues/new?template=unrecognised_status.yml) when you see it.
 
 Part of the [ha-parcel-integrations](https://ha-parcel-integrations.github.io/) family: it publishes the same canonical parcel format, statuses and events as the other carrier integrations, so it plugs straight into the [Parcel Aggregator](https://github.com/ha-parcel-integrations/ha-parcel-aggregator) and cross-carrier automations.
 
@@ -129,7 +129,7 @@ The `status` field is the carrier-agnostic enum shared by the whole integration 
 | `problem` | A delivery attempt failed (for example, no safe place to leave the parcel); a new attempt normally follows |
 | `unknown` | Not yet on Straightship's system, or a status we have not mapped yet |
 
-`at_pickup_point` and `returning` never occur: Straightship's tracking page shows neither.
+`at_pickup_point` and `returning` never occur: Straightship reports neither.
 
 The carrier's own human-readable text is always available as `raw_status`.
 
@@ -142,7 +142,7 @@ The integration fires these on the event bus (also available as device triggers 
 | `straightship_parcel_registered` | A new parcel appears in the active list |
 | `straightship_parcel_status_changed` | A parcel's canonical status changes (`old_status` / `new_status` in the payload), except the final hop to delivered |
 | `straightship_parcel_delivered` | A parcel is delivered |
-| `straightship_parcel_delivery_time_changed` | The expected delivery window changes — the page carries no delivery window, so this does not fire today |
+| `straightship_parcel_delivery_time_changed` | The expected delivery window changes — Straightship gives no delivery window, so this does not fire today |
 
 Every payload is the full normalised parcel plus the hub's `device_id`. Events are suppressed on the first refresh after start-up.
 
@@ -195,7 +195,7 @@ All third-party trademarks, trade names, product names, logos, and other brand a
 
 This integration may rely on public, unofficial, or undocumented carrier interfaces, accessed with your own account or API key where required. These may change or be withdrawn without notice and may be subject to Straightship's terms. Data is sent only to Straightship's own services or those of its group; this project operates no servers of its own. You are responsible for ensuring that your use complies with applicable law and those terms. Use is at your own risk; see the [licence](LICENSE) for warranty limitations.
 
-This integration reads the same public tracking result page that Straightship publishes for each tracking code. It never uses the page's proof-of-delivery lookup.
+This integration reads the same public tracking lookup that Straightship offers for each tracking code. It never uses the proof-of-delivery lookup.
 
 ## Contributing
 
