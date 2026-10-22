@@ -1,4 +1,5 @@
 """Constants for the Straightship parcel tracker integration."""
+
 from enum import StrEnum
 
 from homeassistant.const import Platform
@@ -16,14 +17,14 @@ class ParcelStatus(StrEnum):
     roughly the order a parcel moves through.
     """
 
-    REGISTERED = "registered"               # Sender announced the parcel; not handed over yet
-    IN_TRANSIT = "in_transit"               # In the carrier's network
-    OUT_FOR_DELIVERY = "out_for_delivery"   # On a delivery vehicle today
-    AT_PICKUP_POINT = "at_pickup_point"     # Ready to collect at a pickup location
-    DELIVERED = "delivered"                 # Handed over
-    RETURNING = "returning"                 # Failed delivery, going back to sender
-    PROBLEM = "problem"                     # Carrier reports an exception/issue
-    UNKNOWN = "unknown"                     # Raw status we have not mapped yet
+    REGISTERED = "registered"  # Sender announced the parcel; not handed over yet
+    IN_TRANSIT = "in_transit"  # In the carrier's network
+    OUT_FOR_DELIVERY = "out_for_delivery"  # On a delivery vehicle today
+    AT_PICKUP_POINT = "at_pickup_point"  # Ready to collect at a pickup location
+    DELIVERED = "delivered"  # Handed over
+    RETURNING = "returning"  # Failed delivery, going back to sender
+    PROBLEM = "problem"  # Carrier reports an exception/issue
+    UNKNOWN = "unknown"  # Raw status we have not mapped yet
 
 
 PLATFORMS = [Platform.BUTTON, Platform.CALENDAR, Platform.SENSOR]
@@ -76,7 +77,9 @@ PENDING_CAPABILITIES: frozenset[str] = frozenset()
 # It needs no login or cookie, and an unknown code is still HTTP 200 with a
 # "No results found!" body. Never use the form on the carrier's tracking page:
 # its script forwards the entered code to a third-party collector.
-TRACKING_API_URL = "https://straightship.com/track-your-shipment/tracking-id/{tracking_code}/"
+TRACKING_API_URL = (
+    "https://straightship.com/track-your-shipment/tracking-id/{tracking_code}/"
+)
 TRACKING_URL = TRACKING_API_URL
 
 # Conservative cap on a configured code; the carrier decides what is valid.

@@ -1,4 +1,5 @@
 """Tests for the result-page parser."""
+
 import pytest
 
 from custom_components.straightship.parser import (
@@ -47,14 +48,14 @@ def test_column_layout_summary_is_read_by_label():
 
 
 def test_status_cell_text_content_includes_obfuscated_mail_link():
-    parsed = parse_page(
-        page(rows=[("2026-01-03 17:00:00", FAILED_TEXT_HTML, CITY)])
-    )
+    parsed = parse_page(page(rows=[("2026-01-03 17:00:00", FAILED_TEXT_HTML, CITY)]))
     assert parsed["history"][0]["status"] == FAILED_TEXT
 
 
 def test_script_text_and_breaks_are_handled():
-    html = page(rows=[("2026-01-03 17:00:00", "Loading<br/>now<script>x()</script>", "")])
+    html = page(
+        rows=[("2026-01-03 17:00:00", "Loading<br/>now<script>x()</script>", "")]
+    )
     assert parse_page(html)["history"][0]["status"] == "Loading now"
 
 
@@ -87,7 +88,9 @@ def test_missing_last_updated_is_none_and_short_rows_are_skipped():
 
 
 def test_history_row_without_city_cell():
-    html = page().replace("</tbody>", "<tr><td>2026-01-06 00:00:00</td><td>Loading</td></tr></tbody>")
+    html = page().replace(
+        "</tbody>", "<tr><td>2026-01-06 00:00:00</td><td>Loading</td></tr></tbody>"
+    )
     assert parse_page(html)["history"][-1]["city"] is None
 
 
@@ -98,7 +101,10 @@ def test_unclosed_markup_still_yields_rows():
 
 
 def test_self_closing_tags_and_row_helper():
-    assert parse_page(page().replace("<h5>", "<br/><hr><h5>"))["tracking_id"] == ACTIVE_CODE
+    assert (
+        parse_page(page().replace("<h5>", "<br/><hr><h5>"))["tracking_id"]
+        == ACTIVE_CODE
+    )
     assert row("t", "Loading", None)[2] == ""
 
 

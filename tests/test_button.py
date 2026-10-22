@@ -1,4 +1,5 @@
 """Tests for the Straightship refresh button."""
+
 from unittest.mock import AsyncMock, MagicMock
 
 from custom_components.straightship.button import StraightshipRefreshButton

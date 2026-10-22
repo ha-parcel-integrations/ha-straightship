@@ -1,4 +1,5 @@
 """Tests for Straightship device triggers."""
+
 from unittest.mock import AsyncMock
 
 from custom_components.straightship.const import DOMAIN

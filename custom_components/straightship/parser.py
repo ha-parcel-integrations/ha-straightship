@@ -6,10 +6,11 @@ anything it cannot positively identify raises
 are matched on their label, never on position, and a value is taken in full
 because one status sentence embeds a mail link.
 """
+
 from __future__ import annotations
 
-import re
 from html.parser import HTMLParser
+import re
 
 NO_RESULT_MARKER = "No results found!"
 

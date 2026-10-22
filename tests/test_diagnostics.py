@@ -1,4 +1,5 @@
 """Tests for Straightship diagnostics."""
+
 from datetime import timedelta
 from unittest.mock import MagicMock
 

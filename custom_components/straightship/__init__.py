@@ -1,8 +1,9 @@
 """Straightship parcel tracker custom component for Home Assistant."""
+
 from __future__ import annotations
 
-import logging
 from dataclasses import dataclass
+import logging
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -27,7 +28,9 @@ class StraightshipData:
 type StraightshipConfigEntry = ConfigEntry[StraightshipData]
 
 
-async def async_setup_entry(hass: HomeAssistant, entry: StraightshipConfigEntry) -> bool:
+async def async_setup_entry(
+    hass: HomeAssistant, entry: StraightshipConfigEntry
+) -> bool:
     """Set up Straightship from a config entry."""
     # No auth: Straightship tracking is public, so the HA-managed session is fine.
     client = StraightshipApiClient(async_get_clientsession(hass))
@@ -64,7 +67,9 @@ async def _async_options_updated(
     await entry.runtime_data.coordinator.async_request_refresh()
 
 
-async def async_unload_entry(hass: HomeAssistant, entry: StraightshipConfigEntry) -> bool:
+async def async_unload_entry(
+    hass: HomeAssistant, entry: StraightshipConfigEntry
+) -> bool:
     """Unload the Straightship config entry."""
     if not await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
         return False

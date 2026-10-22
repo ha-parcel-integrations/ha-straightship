@@ -1,4 +1,5 @@
 """Tests for the Straightship API client."""
+
 from unittest.mock import AsyncMock, MagicMock
 
 import aiohttp
@@ -9,12 +10,7 @@ from custom_components.straightship.api import (
     StraightshipApiError,
 )
 
-from .payloads import (
-    ACTIVE_CODE,
-    NO_RESULT_PAGE,
-    active_html,
-    page,
-)
+from .payloads import ACTIVE_CODE, NO_RESULT_PAGE, active_html, page
 
 
 def _session_returning(status: int, body: str = "", headers: dict | None = None):
@@ -77,7 +73,9 @@ async def test_no_results_is_none():
 
 
 async def test_page_without_summary_is_a_changed_template_error():
-    client = StraightshipApiClient(_session_returning(200, "<html><p>Welcome</p></html>"))
+    client = StraightshipApiClient(
+        _session_returning(200, "<html><p>Welcome</p></html>")
+    )
     with pytest.raises(StraightshipApiError) as err:
         await client.async_get_parcel(ACTIVE_CODE)
     assert "unexpected reply" in str(err.value)
@@ -98,14 +96,18 @@ async def test_raises_on_error_status():
 
 
 async def test_429_carries_retry_after_seconds():
-    client = StraightshipApiClient(_session_returning(429, headers={"Retry-After": "120"}))
+    client = StraightshipApiClient(
+        _session_returning(429, headers={"Retry-After": "120"})
+    )
     with pytest.raises(StraightshipApiError) as err:
         await client.async_get_parcel(ACTIVE_CODE)
     assert err.value.status_code == 429
     assert err.value.retry_after == 120.0
 
 
-@pytest.mark.parametrize("header", [{}, {"Retry-After": "Wed, 21 Oct 2026 07:28:00 GMT"}])
+@pytest.mark.parametrize(
+    "header", [{}, {"Retry-After": "Wed, 21 Oct 2026 07:28:00 GMT"}]
+)
 async def test_429_without_usable_retry_after(header):
     client = StraightshipApiClient(_session_returning(429, headers=header))
     with pytest.raises(StraightshipApiError) as err:

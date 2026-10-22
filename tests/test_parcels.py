@@ -2,8 +2,9 @@
 
 These need no Home Assistant instance: ``parcels.py`` is free of I/O.
 """
+
+from datetime import UTC, datetime, timedelta
 import logging
-from datetime import datetime, timedelta, timezone
 
 import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
@@ -28,6 +29,7 @@ from custom_components.straightship.parcels import (
     parse_iso,
     sort_parcels_by_ts,
     to_iso_timestamp,
+    tracking_url,
 )
 
 from .payloads import (
@@ -52,7 +54,7 @@ from .payloads import (
 
 
 @pytest.mark.parametrize(
-    "text,expected",
+    ("text", "expected"),
     [
         (REGISTERED_TEXT, ParcelStatus.REGISTERED),
         (f"{ORIGIN_TEXT} ({CITY}, ON)", ParcelStatus.IN_TRANSIT),
@@ -71,7 +73,9 @@ def test_map_event_status_known_sentences(text, expected):
 
 def test_normalize_status_text_strips_location_and_collapses_whitespace():
     assert (
-        normalize_status_text(f"  Package is  received\n at a Straightship station   ({CITY},  ON) ")
+        normalize_status_text(
+            f"  Package is  received\n at a Straightship station   ({CITY},  ON) "
+        )
         == STATION_TEXT
     )
 
@@ -134,7 +138,7 @@ def test_unmapped_everywhere_is_unknown_with_one_category_only_warning(caplog):
 def test_parse_iso_handles_z_naive_and_garbage():
     assert parse_iso("2026-04-29T13:12:42Z").tzinfo is not None
     # A naive value is assumed UTC so mixed lists still sort.
-    assert parse_iso("2026-04-29T13:12:42").tzinfo == timezone.utc
+    assert parse_iso("2026-04-29T13:12:42").tzinfo == UTC
     assert parse_iso("not-a-date") is None
     assert parse_iso(None) is None
 
@@ -187,7 +191,11 @@ def test_build_history_keeps_document_order_within_one_timestamp():
             ("2026-01-02 12:30:00", LOADING_TEXT),
         )
     )
-    assert [e["raw_status"] for e in history] == [ORIGIN_TEXT, STATION_TEXT, LOADING_TEXT]
+    assert [e["raw_status"] for e in history] == [
+        ORIGIN_TEXT,
+        STATION_TEXT,
+        LOADING_TEXT,
+    ]
 
 
 def test_build_history_sorts_an_out_of_order_page_stably():
@@ -198,11 +206,17 @@ def test_build_history_sorts_an_out_of_order_page_stably():
             ("2026-01-03 08:00:00", LOADING_TEXT),
         )
     )
-    assert [e["raw_status"] for e in history] == [REGISTERED_TEXT, OFD_TEXT, LOADING_TEXT]
+    assert [e["raw_status"] for e in history] == [
+        REGISTERED_TEXT,
+        OFD_TEXT,
+        LOADING_TEXT,
+    ]
 
 
 def test_build_history_caps_to_the_newest_events():
-    events = _events(*[(f"2026-01-{day:02d} 10:00:00", LOADING_TEXT) for day in range(1, 26)])
+    events = _events(
+        *[(f"2026-01-{day:02d} 10:00:00", LOADING_TEXT) for day in range(1, 26)]
+    )
     history = build_history(events, max_events=20)
     assert len(history) == 20
     assert history[0]["timestamp"].startswith("2026-01-06")
@@ -210,7 +224,9 @@ def test_build_history_caps_to_the_newest_events():
 
 
 def test_build_history_default_cap_is_twenty():
-    events = _events(*[(f"2026-01-{day:02d} 10:00:00", LOADING_TEXT) for day in range(1, 26)])
+    events = _events(
+        *[(f"2026-01-{day:02d} 10:00:00", LOADING_TEXT) for day in range(1, 26)]
+    )
     assert len(build_history(events)) == 20
 
 
@@ -337,7 +353,8 @@ def test_normalize_active_parcel_uses_history_fallback():
 
 def test_failed_attempt_then_new_promise_is_not_a_return():
     raw = active_sample()
-    raw["history"] = raw["history"][:3] + [
+    raw["history"] = [
+        *raw["history"][:3],
         {"timestamp": "2026-01-03 17:00:00", "status": FAILED_TEXT, "city": None},
     ]
     assert normalize_parcel(raw)["status"] == ParcelStatus.PROBLEM
@@ -360,9 +377,12 @@ def test_normalize_keeps_raw_payload_untrimmed():
     raw = active_sample()
     assert normalize_parcel(raw)["raw"] is raw
     assert DELIVERED_ROWS  # the rows are not reduced by normalisation
-    assert normalize_parcel(delivered_sample(), include_history=True)["raw"]["history"][1][
-        "city"
-    ] == CITY
+    assert (
+        normalize_parcel(delivered_sample(), include_history=True)["raw"]["history"][1][
+            "city"
+        ]
+        == CITY
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -410,7 +430,7 @@ def _entry(filter_type: str, amount: int) -> MockConfigEntry:
 
 
 def _delivered_pair() -> list[dict]:
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     return [
         {"barcode": "RECENT", "delivered_at": (now - timedelta(days=1)).isoformat()},
         {"barcode": "OLD", "delivered_at": (now - timedelta(days=30)).isoformat()},
@@ -434,7 +454,5 @@ def test_delivered_filter_keeps_unparseable_timestamp():
 
 
 def test_tracking_url_needs_a_code_and_encodes_it():
-    from custom_components.straightship.parcels import tracking_url
-
     assert tracking_url(None) is None
     assert tracking_url("A/B").endswith("/tracking-id/A%2FB/")

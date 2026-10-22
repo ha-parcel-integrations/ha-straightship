@@ -4,6 +4,7 @@ Every value is invented: codes, cities, timestamps and names carry no real
 parcel data. Only the page layout, labels and status sentences mirror the live
 page.
 """
+
 from __future__ import annotations
 
 from html import escape
@@ -66,10 +67,14 @@ def page(
             + "</tr></table>"
         )
     else:
-        summary = "<table>" + "".join(
-            f"<tr><th>{label}</th><td>{escape(value)}</td></tr>"
-            for label, value in labels
-        ) + "</table>"
+        summary = (
+            "<table>"
+            + "".join(
+                f"<tr><th>{label}</th><td>{escape(value)}</td></tr>"
+                for label, value in labels
+            )
+            + "</table>"
+        )
     body = "".join(
         f"<tr><td>{ts}</td><td>{status}</td><td>{escape(city)}</td></tr>"
         for ts, status, city in rows
