@@ -55,7 +55,11 @@ A custom Home Assistant integration that tracks your [Straightship](https://stra
 
 1. In HACS, choose the three-dot menu → **Custom repositories**.
 2. Add `https://github.com/ha-parcel-integrations/ha-straightship` as an **Integration**.
-3. Install **Straightship** and restart Home Assistant.
+3. Install **Straightship** and restart Home Assistant if HACS asks you to.
+
+Or click the button below to open it directly in HACS:
+
+[![Open your Home Assistant instance and open this repository in HACS.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=ha-parcel-integrations&repository=ha-straightship&category=integration)
 
 ### Manual
 
@@ -63,7 +67,9 @@ Copy `custom_components/straightship` into your `config/custom_components/` fold
 
 ## Configuration
 
-Add the integration via **Settings → Devices & Services → Add Integration → Straightship**. There is nothing to fill in: the hub is created immediately (Straightship tracking needs no account).
+[![Open your Home Assistant instance and start setting up this integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=straightship)
+
+Or set it up by hand: add the integration via **Settings → Devices & Services → Add Integration → Straightship**. There is nothing to fill in: the hub is created immediately (Straightship tracking needs no account).
 
 Then add parcels via the integration's **Configure** dialog, the [`straightship.track_parcel`](#services) service, or a [dashboard button](examples/dashboards/add_parcel_card.yaml). The tracking code is on your shipping confirmation email; add it with or without spaces, any capitalisation.
 
