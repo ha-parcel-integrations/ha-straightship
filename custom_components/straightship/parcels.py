@@ -108,7 +108,7 @@ def map_event_status(text: str | None) -> ParcelStatus | None:
 
 
 def map_parcel_status(
-    summary: str | None, history_texts: list[str] | None = None
+    summary: str | None, history_texts: list[str | None] | None = None
 ) -> ParcelStatus:
     """Map the summary status, else the newest mappable history event.
 

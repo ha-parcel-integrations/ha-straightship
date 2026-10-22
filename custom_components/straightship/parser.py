@@ -137,7 +137,9 @@ def _summary(tables: list[list[list[tuple[str, str]]]]) -> dict[str, str]:
     return found
 
 
-def _history(tables: list[list[list[tuple[str, str]]]]) -> list[dict[str, str]] | None:
+def _history(
+    tables: list[list[list[tuple[str, str]]]],
+) -> list[dict[str, str | None]] | None:
     """Return the history rows, or ``None`` when no history table exists."""
     for rows in tables:
         if not rows:
