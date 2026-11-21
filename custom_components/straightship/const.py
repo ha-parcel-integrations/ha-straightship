@@ -54,7 +54,7 @@ CAPABILITIES = frozenset({"url", "history"})
 # into CAPABILITIES. A multi-backend carrier declares
 # PENDING_CAPABILITIES_BY_VARIANT with the same keys as its
 # CAPABILITIES_BY_VARIANT instead (omit backends with nothing pending).
-PENDING_CAPABILITIES: frozenset[str] = frozenset()
+PENDING_CAPABILITIES: frozenset[str] = frozenset({"pickup_point"})
 
 # If this carrier ever grows a second backend with a genuinely different
 # payload shape (a country-specific API, not just a config option), replace

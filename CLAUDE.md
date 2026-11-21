@@ -35,13 +35,13 @@ you act in one of these areas:
   summary+diagnostic sensors. Add a new non-parcel sensor's unique_id to the set.
 - **Per-parcel sensors are removed by the summary sensor** via
   `entity_registry.async_remove` (self-removal races and leaves ghosts).
-- **The optional pickup-point summaries are a pair.** A carrier that can tell
-  a parcel is destined for a pickup point exposes
-  `en_route_to_pickup_point` for `pickup is true` before it arrives; one that
-  can reach `ParcelStatus.AT_PICKUP_POINT` also exposes `awaiting_pickup`.
-  See *Parcel contract* in `CONVENTIONS.md`. Say "pickup point", not
-  "ServicePoint"/"parcel shop"/"locker", for the generic concept; the
-  example carrier demonstrates both canonical sensors.
+- **Pickup sensors are exposed, pending evidence.** `awaiting_pickup` and
+  `en_route_to_pickup_point` exist and read 0 until a parcel shows a pickup
+  status. `pickup` comes from `is_pickup(None, status, event_statuses)`, so it
+  turns true once a history event maps to `AT_PICKUP_POINT`; `pickup_point`
+  stays `None` unless a real name appears. No pickup-point status or flag has
+  been seen yet, so no wording maps to `AT_PICKUP_POINT`: when one shows up,
+  map it from the real text and move `pickup_point` into `CAPABILITIES`.
 
 ## Carrier-specific notes
 

@@ -40,6 +40,12 @@ async def test_setup_and_unload(hass):
     assert incoming is not None
     assert incoming.state == "1"
 
+    # Both pickup summaries are registered and read zero.
+    for suffix in ("awaiting_pickup", "en_route_to_pickup_point"):
+        state = hass.states.get(f"sensor.straightship_{suffix}")
+        assert state is not None
+        assert state.state == "0"
+
     # Services registered on setup...
     assert hass.services.has_service(DOMAIN, "track_parcel")
 
@@ -145,3 +151,33 @@ async def test_options_update_applies_live_without_reload(hass):
 
     incoming = hass.states.get("sensor.straightship_incoming_parcels")
     assert incoming.state == "2"
+
+
+async def test_restored_pickup_sensor_is_not_swept_as_stale(hass):
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        unique_id=DOMAIN,
+        options={CONF_PARCELS: [{CONF_TRACKING_CODE: ACTIVE_CODE}]},
+    )
+    entry.add_to_hass(hass)
+    registry = er.async_get(hass)
+    registry.async_get_or_create(
+        "sensor",
+        DOMAIN,
+        f"{entry.entry_id}_awaiting_pickup",
+        config_entry=entry,
+    )
+
+    with patch(
+        "custom_components.straightship.api.StraightshipApiClient.async_get_parcel",
+        new=AsyncMock(return_value=_sample()),
+    ):
+        assert await hass.config_entries.async_setup(entry.entry_id)
+        await hass.async_block_till_done()
+
+    assert (
+        registry.async_get_entity_id(
+            "sensor", DOMAIN, f"{entry.entry_id}_awaiting_pickup"
+        )
+        is not None
+    )
